@@ -6,8 +6,8 @@ import {
     updateQuestion,
     deleteQuestion,
     getQuestionStats,
-} from "../controllers/questionController.js";
-import { authenticate, requireAdmin } from "../middleware/auth.js";
+} from "../controllers/questionController";
+import { authenticate, requireAdmin } from "../middleware/auth";
 
 const router = Router();
 

@@ -2,19 +2,38 @@ import express from "express";
 import { createServer } from "http";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
 
-dotenv.config();
+// ES modules: get __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-import { connectMainDB } from "./config/database.js";
-import { initSocket } from "./services/socketService.js";
-import { setSocketIo as setQuestionSocketIo } from "./controllers/questionController.js";
-import { setSocketIo as setResponseSocketIo } from "./controllers/responseController.js";
+// Load .env from project root
+const envPaths = [
+    path.join(__dirname, "../.env"),
+    path.join(process.cwd(), ".env"),
+    ".env"
+];
 
-import authRoutes from "./routes/auth.js";
-import userRoutes from "./routes/users.js";
-import questionRoutes from "./routes/questions.js";
-import responseRoutes from "./routes/responses.js";
-import beamsRoutes from "./routes/beams.js";
+for (const envPath of envPaths) {
+    if (fs.existsSync(envPath)) {
+        dotenv.config({ path: envPath });
+        break;
+    }
+}
+
+import { connectMainDB } from "./config/database";
+import { initSocket } from "./services/socketService";
+import { setSocketIo as setQuestionSocketIo } from "./controllers/questionController";
+import { setSocketIo as setResponseSocketIo } from "./controllers/responseController";
+
+import authRoutes from "./routes/auth";
+import userRoutes from "./routes/users";
+import questionRoutes from "./routes/questions";
+import responseRoutes from "./routes/responses";
+import beamsRoutes from "./routes/beams";
 
 const app = express();
 const httpServer = createServer(app);

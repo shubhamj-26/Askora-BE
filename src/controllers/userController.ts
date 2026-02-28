@@ -1,8 +1,8 @@
 import { Response } from "express";
 import bcrypt from "bcryptjs";
-import { AuthRequest } from "../types/index.js";
-import { getOrgConnection } from "../config/database.js";
-import { getUserModel } from "../models/OrgModels.js";
+import { AuthRequest } from "../types/index";
+import { getOrgConnection } from "../config/database";
+import { getUserModel } from "../models/OrgModels";
 
 export const addUser = async (req: AuthRequest, res: Response): Promise<void> => {
     try {

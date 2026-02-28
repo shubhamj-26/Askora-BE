@@ -2,8 +2,6 @@ import { Server as SocketServer } from "socket.io";
 import { Server } from "http";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
-
 export const initSocket = (httpServer: Server): SocketServer => {
     const io = new SocketServer(httpServer, {
         cors: {
@@ -22,7 +20,8 @@ export const initSocket = (httpServer: Server): SocketServer => {
         }
 
         try {
-            const decoded = jwt.verify(token, JWT_SECRET) as {
+            const jwtSecret = process.env.JWT_SECRET || "secret";
+            const decoded = jwt.verify(token, jwtSecret) as {
                 userId: string;
                 email: string;
                 role: string;

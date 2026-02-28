@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { beamsAuth } from "../controllers/beamsController.js";
-import { authenticate } from "../middleware/auth.js";
+import { beamsAuth } from "../controllers/beamsController";
+import { authenticate } from "../middleware/auth";
 
 const router = Router();
 

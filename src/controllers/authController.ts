@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { CompanyDetails } from "../models/CompanyDetails.js";
-import { getOrgConnection } from "../config/database.js";
-import { getUserModel, getTokenModel } from "../models/OrgModels.js";
-import { SignupPayload, LoginPayload, AuthRequest } from "../types/index.js";
+import { CompanyDetails } from "../models/CompanyDetails";
+import { getOrgConnection } from "../config/database";
+import { getUserModel, getTokenModel } from "../models/OrgModels";
+import { SignupPayload, LoginPayload, AuthRequest } from "../types/index";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
 
 // Helper: derive DB name from email domain
@@ -58,10 +57,11 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
         });
 
         // Generate token
+        const jwtSecret = process.env.JWT_SECRET || "secret";
         const token = jwt.sign(
             { userId: adminUser._id?.toString(), email, role: "admin", companyDbName: dbName },
-            JWT_SECRET,
-            { expiresIn: JWT_EXPIRES_IN }
+            jwtSecret,
+            { expiresIn: JWT_EXPIRES_IN } as any
         );
 
         // Store token in DB
@@ -129,10 +129,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         }
 
         // Generate token
+        const jwtSecret = process.env.JWT_SECRET || "secret";
         const token = jwt.sign(
             { userId: user._id?.toString(), email, role: user.role, companyDbName: dbName },
-            JWT_SECRET,
-            { expiresIn: JWT_EXPIRES_IN }
+            jwtSecret,
+            { expiresIn: JWT_EXPIRES_IN } as any
         );
 
         // Store token

@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { AuthRequest } from "../types/index.js";
+import { AuthRequest } from "../types/index";
 
 export const beamsAuth = async (req: AuthRequest, res: Response): Promise<void> => {
     try {

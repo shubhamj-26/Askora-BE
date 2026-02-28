@@ -1,10 +1,8 @@
 import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { AuthRequest } from "../types/index.js";
-import { getOrgConnection } from "../config/database.js";
-import { getTokenModel } from "../models/OrgModels.js";
-
-const JWT_SECRET = process.env.JWT_SECRET as string;
+import { AuthRequest } from "../types/index";
+import { getOrgConnection } from "../config/database";
+import { getTokenModel } from "../models/OrgModels";
 
 export const authenticate = async (
     req: AuthRequest,
@@ -19,7 +17,8 @@ export const authenticate = async (
         }
 
         const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, JWT_SECRET) as {
+        const jwtSecret = process.env.JWT_SECRET || "secret";
+        const decoded = jwt.verify(token, jwtSecret) as {
             userId: string;
             email: string;
             role: "admin" | "user";

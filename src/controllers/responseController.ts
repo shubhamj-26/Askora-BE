@@ -1,8 +1,8 @@
 import { Response as ExpressResponse } from "express";
-import { AuthRequest } from "../types/index.js";
-import { getOrgConnection } from "../config/database.js";
-import { getResponseModel, getQuestionModel } from "../models/OrgModels.js";
-import { triggerPusherEvent } from "../config/pusher.js";
+import { AuthRequest } from "../types/index";
+import { getOrgConnection } from "../config/database";
+import { getResponseModel, getQuestionModel } from "../models/OrgModels";
+import { triggerPusherEvent } from "../config/pusher";
 import { Server as SocketServer } from "socket.io";
 
 let ioInstance: SocketServer | null = null;
@@ -48,7 +48,7 @@ export const submitResponse = async (req: AuthRequest, res: ExpressResponse): Pr
         }
 
         // Get user name from DB
-        const { getUserModel } = await import("../models/OrgModels.js");
+        const { getUserModel } = await import("../models/OrgModels");
         const UserModel = getUserModel(conn);
         const user = await UserModel.findById(userId);
 

@@ -1,8 +1,8 @@
 import { Response } from "express";
-import { AuthRequest } from "../types/index.js";
-import { getOrgConnection } from "../config/database.js";
-import { getQuestionModel, getResponseModel } from "../models/OrgModels.js";
-import { triggerPusherEvent } from "../config/pusher.js";
+import { AuthRequest } from "../types/index";
+import { getOrgConnection } from "../config/database";
+import { getQuestionModel, getResponseModel } from "../models/OrgModels";
+import { triggerPusherEvent } from "../config/pusher";
 import { Server as SocketServer } from "socket.io";
 
 let ioInstance: SocketServer | null = null;

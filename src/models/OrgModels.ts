@@ -1,5 +1,5 @@
 import { Schema, Connection, Model } from "mongoose";
-import { IUser, IQuestion, IResponse, ITokenRecord } from "../types/index.js";
+import { IUser, IQuestion, IResponse, ITokenRecord } from "../types/index";
 
 // User Schema
 const UserSchema = new Schema<IUser>(
