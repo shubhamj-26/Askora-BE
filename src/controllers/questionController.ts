@@ -45,6 +45,8 @@ export const createQuestion = async (req: AuthRequest, res: Response): Promise<v
         // Pusher real-time event
         await triggerPusherEvent(`org-${companyDbName}`, "question-new", { question });
 
+        console.log(`✅ Question created: "${text.substring(0, 30)}...". Pusher event sent to org-${companyDbName}`);
+
         res.status(201).json({ success: true, message: "Question created", data: { question } });
     } catch (error) {
         console.error("Create question error:", error);
