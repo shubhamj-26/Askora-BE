@@ -4,22 +4,21 @@ import { AuthRequest } from "../types/index";
 export const beamsAuth = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         const { userId, companyDbName, role } = req.user!;
-        const beamsUserId = `${companyDbName}_${userId}`;
 
-        // Return the user ID for Pusher Beams client-side auth
-        // The client uses this to associate the browser with the user
+        // Return interests (Pusher channel names) for this user to subscribe to
+        const interests = [
+            `org-${companyDbName}`,                          // org-wide events
+            `user-${userId}`,                                 // user-specific events
+            ...(role === "admin" ? [`admin-${companyDbName}`] : []),  // admin-only events
+        ].filter(Boolean) as string[];
+
         res.json({
             success: true,
             data: {
-                beamsUserId,
+                beamsUserId: `${companyDbName}_${userId}`,
                 companyDbName,
                 role,
-                // Interest channels this user should subscribe to
-                interests: [
-                    `org-${companyDbName}`,
-                    `user-${userId}`,
-                    role === "admin" ? `admin-${companyDbName}` : null,
-                ].filter(Boolean),
+                interests,
             },
         });
     } catch (error) {

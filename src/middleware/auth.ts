@@ -4,6 +4,8 @@ import { AuthRequest } from "../types/index";
 import { getOrgConnection } from "../config/database";
 import { getTokenModel } from "../models/OrgModels";
 
+const getJwtSecret = () => process.env.JWT_SECRET || "askora_dev_secret";
+
 export const authenticate = async (
     req: AuthRequest,
     res: Response,
@@ -17,34 +19,61 @@ export const authenticate = async (
         }
 
         const token = authHeader.split(" ")[1];
-        const jwtSecret = process.env.JWT_SECRET || "secret";
-        const decoded = jwt.verify(token, jwtSecret) as {
+
+        let decoded: {
             userId: string;
             email: string;
             role: "admin" | "user";
             companyDbName: string;
         };
 
-        // Check token exists in DB (allows revocation)
+        try {
+            decoded = jwt.verify(token, getJwtSecret()) as typeof decoded;
+        } catch (err: unknown) {
+            const jwtErr = err as { name?: string };
+            if (jwtErr.name === "TokenExpiredError") {
+                res.status(401).json({
+                    success: false,
+                    message: "Access token expired",
+                    code: "TOKEN_EXPIRED",
+                });
+            } else {
+                res.status(401).json({ success: false, message: "Invalid token" });
+            }
+            return;
+        }
+
+        // Verify token exists in DB (supports revocation)
         const conn = getOrgConnection(decoded.companyDbName);
         const TokenModel = getTokenModel(conn);
-        const tokenRecord = await TokenModel.findOne({ token, userId: decoded.userId });
+        const tokenRecord = await TokenModel.findOne({
+            token,
+            userId: decoded.userId,
+        });
 
         if (!tokenRecord) {
-            res.status(401).json({ success: false, message: "Token is invalid or expired" });
+            res.status(401).json({
+                success: false,
+                message: "Token not found. Please log in again.",
+            });
             return;
         }
 
         if (tokenRecord.expiresAt < new Date()) {
             await TokenModel.deleteOne({ token });
-            res.status(401).json({ success: false, message: "Token expired" });
+            res.status(401).json({
+                success: false,
+                message: "Access token expired",
+                code: "TOKEN_EXPIRED",
+            });
             return;
         }
 
         req.user = decoded;
         next();
-    } catch {
-        res.status(401).json({ success: false, message: "Invalid token" });
+    } catch (error) {
+        console.error("Auth middleware error:", error);
+        res.status(401).json({ success: false, message: "Authentication failed" });
     }
 };
 
